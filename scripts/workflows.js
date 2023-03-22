@@ -21,6 +21,12 @@
     official: true,
   },
   {
+    model: 'axt1800-5.4',
+    config: 'config-wlan-ap-5.4',
+    target: 'target_wlan_ap-gl-axt1800-5-4',
+    official: true,
+  },
+  {
     model: 'mt2500',
     config: 'config-mt798x-7.6.6.1',
     target: 'target_mt7981_gl-mt2500',

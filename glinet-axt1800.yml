@@ -2,7 +2,7 @@
 profile: glinet_axt1800
 target: ipq807x
 subtarget: ipq60xx
-description: Build image for the GL.iNET AXT1800
+description: Build image for the GL.iNET AXT1800(Linux Kernel 4.19)
 image: bin/targets/ipq807x/ipq60xx/openwrt-ipq807x-glinet_axt1800-squashfs-sysupgrade.tar
 feeds:
   - name: gl_feeds_wlanap
@@ -52,3 +52,6 @@ packages:
   - luci-app-ttyd
   - luci-app-serverchan
   - luci-app-transmission
+  # Added by hyep
+  - luci-theme-design
+  - luci-app-design-config

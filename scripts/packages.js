@@ -13,6 +13,14 @@ module.exports = [
     name: 'luci-app-argon-config',
     desc: 'argon主题设置',
   },
+  {
+    name: 'luci-theme-design',
+    desc: 'design主题',
+  },
+  {
+    name: 'luci-app-design-config',
+    desc: 'argon主题设置',
+  },
 //   {
 //     name: 'luci-app-store',
 //     desc: '应用商店',

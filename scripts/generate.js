@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').execSync;
 
+const skipGitClone = true;
+
 /**
  * 合并对象 不改变原对象
  * @param {*} target
@@ -33,7 +35,9 @@ const exec = require('child_process').execSync;
  * @returns
  */
  const GenerateFeedsConfig = (name, uri, branch) => {
-  exec(`git clone --depth=1 ${uri} -b ${branch} ${name}`);
+  if (!skipGitClone) {
+    exec(`git clone --depth=1 ${uri} -b ${branch} ${name}`);
+  }
   const revision = exec(`cd ${name} && git log -1 --pretty=%H`).toString().trim();
   return {
     name: name.trim(),
@@ -41,6 +45,29 @@ const exec = require('child_process').execSync;
     branch: branch.trim(),
     revision: revision.trim(),
   };
+}
+
+function isTrueText(val) {
+  var newVal = '';
+  if (val instanceof Buffer) {
+    newVal = val.toString().trim();
+  } else if (val instanceof string) {
+    newVal = val;
+  }
+  return newVal == 'true';
+}
+
+function cleanupProfileYamlFiles() {
+
+}
+
+function cleanupWorkflowYamlFiles() {
+  exec()
+}
+
+function cleanupAllYamlFiles() {
+  cleanupWorkflowYamlFiles();
+  cleanupWorkflowYamlFiles();
 }
 
 /**
@@ -51,8 +78,16 @@ const GenerateYml = (workflows) => {
     exec(`npm install js-yaml`);
     const yaml = require('js-yaml');
 
-    const glInfraBuilder = path.resolve(process.cwd(), 'gl-infra-builder')
-    exec(`git clone --depth=1 https://github.com/gl-inet/gl-infra-builder -b main ${glInfraBuilder}`);
+    const glInfraBuilder = path.resolve(process.cwd(), 'gl-infra-builder');
+    // Skip to clone if gl-infra-builder dir is already a git repo
+    const isGitRepo = exec(`cd ${glInfraBuilder} && git rev-parse --is-inside-work-tree`);
+    console.log(`${glInfraBuilder} is a git repo: ${isGitRepo}`);
+    if (isTrueText(isGitRepo)) {
+      exec(`cd ${glInfraBuilder} && git pull`);
+      console.log(`${glInfraBuilder} is already a git repo, skip to clone and run 'git pull' to fetch latest`);
+    } else {
+      exec(`git clone --depth=1 https://github.com/gl-inet/gl-infra-builder -b main ${glInfraBuilder}`);
+    }
 
     // 序列化配置文件
     const keys = ['profile', 'target', 'subtarget', 'description', 'image', 'feeds', 'include', 'packages', 'diffconfig'];
@@ -128,11 +163,11 @@ const GenerateYml = (workflows) => {
     throw error;
   } finally {
      // 清理文件
-     exec(`rm -rf gl-infra-builder`);
-     require('./feeds').forEach(item => exec(`rm -rf ${item.name}`));
-     exec(`rm -rf node_modules`);
-     exec(`rm -rf package-lock.json`);
-     exec(`rm -rf package.json`);
+    //  exec(`rm -rf gl-infra-builder`);
+    //  require('./feeds').forEach(item => exec(`rm -rf ${item.name}`));
+    //  exec(`rm -rf node_modules`);
+    //  exec(`rm -rf package-lock.json`);
+    //  exec(`rm -rf package.json`);
   }
 }
 
